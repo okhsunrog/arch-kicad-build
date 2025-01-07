@@ -6,7 +6,7 @@ pkgrel=1
 pkgdesc="Electronic schematic and printed circuit board (PCB) design tools"
 arch=('i686' 'x86_64')
 url="https://kicad.org/"
-license=('GPL')
+license=('GPL-3.0-or-later')
 depends=('glew' 'wxwidgets-gtk3' 'desktop-file-utils' 'boost-libs' 'python'
          'glm' 'curl' 'swig' 'python-wxpython' 'opencascade'
          'ngspice>=27' 'unixodbc' 'libgit2' 'protobuf' 'zstd')
