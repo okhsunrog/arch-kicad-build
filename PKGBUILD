@@ -9,7 +9,8 @@ url="https://kicad.org/"
 license=('GPL-3.0-or-later')
 depends=('glew' 'wxwidgets-gtk3' 'desktop-file-utils' 'boost-libs' 'python'
          'glm' 'curl' 'swig' 'python-wxpython' 'opencascade'
-         'ngspice>=27' 'unixodbc' 'libgit2' 'protobuf' 'zstd' 'nng')
+         'ngspice>=27' 'unixodbc' 'libgit2' 'protobuf' 'zstd' 'nng'
+         'libspnav')
 makedepends=('cmake' 'git' 'zlib' 'mesa' 'boost')
 optdepends=('kicad-library: for footprints')
 conflicts=('kicad' 'kicad-bzr')
