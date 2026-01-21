@@ -1,0 +1,105 @@
+name: Build Arch Package
+
+on:
+  push:
+    branches: [master, main]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [master, main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:base-devel
+
+    steps:
+      - name: Setup pacman and update system
+        run: |
+          pacman-key --init
+          pacman -Syu --noconfirm
+
+      - name: Install build dependencies
+        run: |
+          pacman -S --noconfirm --needed \
+            git \
+            ccache \
+            cmake \
+            zlib \
+            mesa \
+            boost \
+            boost-libs \
+            glew \
+            wxwidgets-gtk3 \
+            desktop-file-utils \
+            python \
+            glm \
+            curl \
+            swig \
+            python-wxpython \
+            opencascade \
+            ngspice \
+            unixodbc \
+            libgit2 \
+            protobuf \
+            zstd \
+            nng \
+            libspnav \
+            poppler \
+            poppler-glib
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create build user
+        run: |
+          useradd -m builder
+          chown -R builder:builder .
+          echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+      - name: Setup ccache directory
+        run: |
+          mkdir -p /home/builder/.cache/ccache
+          chown -R builder:builder /home/builder/.cache
+
+      - name: Restore ccache
+        uses: actions/cache@v4
+        with:
+          path: /home/builder/.cache/ccache
+          key: ccache-kicad-${{ github.sha }}
+          restore-keys: |
+            ccache-kicad-
+
+      - name: Configure ccache
+        run: |
+          su builder -c "ccache --set-config=max_size=2G"
+          su builder -c "ccache --set-config=compression=true"
+          su builder -c "ccache -z"
+
+      - name: Configure makepkg to use ccache
+        run: |
+          sed -i 's/!ccache/ccache/' /etc/makepkg.conf
+          echo 'export PATH="/usr/lib/ccache/bin:$PATH"' >> /etc/makepkg.conf
+
+      - name: Build package
+        run: |
+          su builder -c "makepkg -s --noconfirm"
+
+      - name: Show ccache stats
+        run: |
+          su builder -c "ccache -s"
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kicad-git-package
+          path: "*.pkg.tar.zst"
+          retention-days: 30
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: "*.pkg.tar.zst"
