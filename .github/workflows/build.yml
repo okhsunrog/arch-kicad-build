@@ -52,7 +52,7 @@ jobs:
                 git ccache cmake ninja zlib mesa boost boost-libs glew \
                 wxwidgets-gtk3 python glm curl swig tar gzip \
                 python-wxpython opencascade ngspice unixodbc libgit2 \
-                protobuf nng libspnav poppler poppler-glib
+                protobuf nng libspnav poppler poppler-glib webkit2gtk-4.1
               
               # Create build user
               useradd -m builder
