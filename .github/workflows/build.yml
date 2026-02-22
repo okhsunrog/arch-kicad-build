@@ -49,10 +49,10 @@ jobs:
               
               # Install dependencies
               pacman -S --noconfirm --needed \
-                git ccache cmake zlib mesa boost boost-libs glew \
-                wxwidgets-gtk3 desktop-file-utils python glm curl swig \
+                git ccache cmake ninja zlib mesa boost boost-libs glew \
+                wxwidgets-gtk3 python glm curl swig tar gzip \
                 python-wxpython opencascade ngspice unixodbc libgit2 \
-                protobuf zstd nng libspnav poppler poppler-glib
+                protobuf nng libspnav poppler poppler-glib
               
               # Create build user
               useradd -m builder
@@ -81,7 +81,7 @@ jobs:
       - name: Upload package artifact
         uses: actions/upload-artifact@v4
         with:
-          name: kicad-git-package
+          name: kicad-nightly-package
           path: "*.pkg.tar.zst"
           retention-days: 30
 
